@@ -1,0 +1,28 @@
+﻿@page "/UserTasks/edit/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+
+<h3>Edit Tasks</h3>
+
+<FormComponent ButtonText="Update" OnValidSubmit="EditUserTask" UserTask="UserTask" />
+
+@code {
+
+    [Parameter] public int id { get; set; }
+    UserTask UserTask = new UserTask();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        UserTask = await _client.GetFromJsonAsync<UserTask>($"{Endpoints.UserTasksEndpoint}/{id}");
+
+    }
+
+    async Task EditUserTask()
+    {
+        await _client.PutAsJsonAsync($"{Endpoints.UserTasksEndpoint}/{id}", UserTask);
+        _navManager.NavigateTo("/UserTasks/");
+    }
+
+
+}

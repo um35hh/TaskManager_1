@@ -1,0 +1,76 @@
+﻿@using TaskManager_1.Client.Components
+
+
+<h3>FormComponent</h3>
+
+
+<EditForm Model="@UserTask" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <fieldset disabled="@Disabled">
+
+        <div class="form-group">
+
+            <label>Task Name:</label>
+            <div>
+                <InputText @bind-Value="UserTask.TaskName" class="form-control" />
+                <ValidationMessage For="@(()=> UserTask.TaskName)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            <label>Task Status:</label>
+            <div>
+                <InputCheckbox @bind-Value="UserTask.IsCompleted" class="form-control" />
+                <ValidationMessage For="@(()=> UserTask.IsCompleted)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            <label>Task Due Date:</label>
+            <div>
+                <InputDate @bind-Value="UserTask.DueDate" class="form-control" />
+                <ValidationMessage For="@(()=> UserTask.DueDate)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            <label>Task Created Date:</label>
+            <div>
+                <InputDate @bind-Value="UserTask.CreatedDate" class="form-control" />
+                <ValidationMessage For="@(()=> UserTask.CreatedDate)" />
+            </div>
+        </div>
+
+
+
+        <button type="submit" class="btn btn-success btn-block">
+            @ButtonText
+        </button>
+    </fieldset>
+
+        @if (!Disabled)
+        {
+            <button type="submit" class="btn btn-success btn-block">
+                @ButtonText
+            </button>
+        }
+        <BackToList Target="UserTasks" />
+
+
+</EditForm>
+
+
+@code {
+
+    [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public UserTask UserTask { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+
+}

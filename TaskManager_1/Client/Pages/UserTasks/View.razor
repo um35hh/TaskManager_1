@@ -1,0 +1,19 @@
+﻿@page "/UserTasks/view/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+
+<h3>View</h3>
+<FormComponent UserTask="UserTask" Disabled="true" />
+@code {
+    [Parameter] public int id { get; set; }
+    UserTask UserTask = new UserTask();
+    protected async override Task OnParametersSetAsync()
+    {
+        UserTask = await
+        _client.GetFromJsonAsync<UserTask>($"{Endpoints.UserTasksEndpoint}/{id}");
+    }
+}
+
+
+

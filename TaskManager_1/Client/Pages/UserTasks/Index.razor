@@ -1,0 +1,85 @@
+﻿@page "/UserTasks/"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+
+<h3 class="card-title">User Tasks </h3>
+
+<a href="/UserTasks/create" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Create New Tasks
+</a>
+<br />
+<br />
+
+
+
+@if (UserTasks == null)
+{
+    <div class="alert alert-info">Loading User Tasks...</div>
+}
+else
+{
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th>Completetion Status</th>
+                <th>Due Date</th>
+                <th>Created Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var UserTask in UserTasks)
+            {
+                <tr>
+                    <td>@UserTask.TaskName</td>
+                    <td>@UserTask.IsCompleted</td>
+                    <td>@UserTask.DueDate</td>
+                    <td>@UserTask.CreatedDate</td>
+                    <td>
+                        <a href="/UserTasks/view/@UserTask.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span>
+                        </a>
+
+                        <a href="/UserTasks/edit/@UserTask.Id" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(UserTask.Id))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+}
+
+@code {
+
+    private List<UserTask> UserTasks;
+    protected async override Task OnInitializedAsync()
+    {
+        UserTasks = await _client.GetFromJsonAsync<List<UserTask>>($"{Endpoints.UserTasksEndpoint}");
+    }
+    async Task Delete(int UserTaskId)
+    {
+        var UserTask = UserTasks.First(q => q.Id == UserTaskId);
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {UserTask.TaskName}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"{Endpoints.UserTasksEndpoint}/{UserTaskId}");
+            await OnInitializedAsync();
+        }
+
+    }
+
+
+
+
+
+}

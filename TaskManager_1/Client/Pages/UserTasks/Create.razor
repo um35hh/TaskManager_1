@@ -1,0 +1,40 @@
+﻿@page "/UserTasks/create/"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3 class="card-title">Create New Tasks</h3>
+<hr />
+<br />
+
+<FormComponent ButtonText="Create Tasks" UserTask="UserTask" OnValidSubmit="@CreateUserTask" />
+
+
+@code {
+
+    UserTask UserTask = new UserTask();
+
+    private IList<UserTask> UserTasks;
+
+
+
+    protected async override Task OnInitializedAsync()
+
+    {
+
+        UserTasks = await _client.GetFromJsonAsync<List<UserTask>>($"{Endpoints.UserTasksEndpoint}");
+
+
+    }
+
+    private async Task CreateUserTask()
+
+    {
+
+        await _client.PostAsJsonAsync(Endpoints.UserTasksEndpoint, UserTask);
+
+        _navManager.NavigateTo("/UserTasks/");
+
+    }
+
+
+}
